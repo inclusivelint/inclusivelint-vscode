@@ -19,7 +19,7 @@ import {
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-let badWords: Array<string> = ['MASTER', 'SLAVE'];
+let badWords = ['master', 'slave'];
 
 connection.onInitialize((params: InitializeParams) => {
 	const result: InitializeResult = {
@@ -72,39 +72,23 @@ documents.onDidChangeContent(change => {
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let text = textDocument.getText();
-	let pattern = /\b[A-Z]{2,}\b/g;
-	let m: RegExpExecArray | null;
-	let diagnostic: Diagnostic;
-	let problems = 0;
 	let diagnostics: Diagnostic[] = [];
-	while ((m = pattern.exec(text))) {
-		problems++;
-		if (badWords.indexOf(m[0]) != -1) {
+	let splitedText: Array<string> = text.split(" ");
+	
+	for (let word of badWords) {
+		if (splitedText.indexOf(word) != -1) {
 			let diagnostic: Diagnostic = {
-				severity: DiagnosticSeverity.Warning,
+				severity: DiagnosticSeverity.Error,
 				range: {
-					start: textDocument.positionAt(m.index),
-					end: textDocument.positionAt(m.index + m[0].length)
+					start: textDocument.positionAt(text.indexOf(word)),
+					end: textDocument.positionAt(text.indexOf(word) + word.length)
 				},
-				message: `${m[0]} not inclusive`,
-				source: 'ex'
+				message: `${word} is not inclusive`,
+				source: 'inclusivelint'
 			};
-			diagnostics.push(diagnostic);
-		} else {
-			let diagnostic: Diagnostic = {
-				severity: DiagnosticSeverity.Warning,
-				range: {
-					start: textDocument.positionAt(m.index),
-					end: textDocument.positionAt(m.index + m[0].length)
-				},
-				message: `${m[0]} is all uppercase.`,
-				source: 'ex'
-			};
-			diagnostics.push(diagnostic);
+			diagnostics.push(diagnostic);	
 		}
-
 	}
-
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
