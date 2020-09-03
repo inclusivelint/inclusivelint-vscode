@@ -6,16 +6,12 @@ import {
 	ProposedFeatures,
 	InitializeParams,
 	TextDocumentSyncKind,
-	InitializeResult,
-	CompletionItem,
-	CompletionItemKind,
-	TextDocumentPositionParams
+	InitializeResult
 } from 'vscode-languageserver';
 
 import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
-
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -58,8 +54,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
-
-
 
 connection.onDidChangeWatchedFiles(_change => {
 	connection.console.log('We received an file change event');
