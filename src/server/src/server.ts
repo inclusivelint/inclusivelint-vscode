@@ -26,9 +26,6 @@ connection.onInitialize((params: InitializeParams) => {
 	return result;
 });
 
-connection.onInitialized(() => {
-});
-
 documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
@@ -41,7 +38,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	for (let word of badWords) {
 		if (splitedText.indexOf(word) != -1) {
 			let diagnostic: Diagnostic = {
-				severity: DiagnosticSeverity.Error,
+				severity: DiagnosticSeverity.Warning,
 				range: {
 					start: textDocument.positionAt(text.indexOf(word)),
 					end: textDocument.positionAt(text.indexOf(word) + word.length)
@@ -55,10 +52,5 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
-connection.onDidChangeWatchedFiles(_change => {
-	connection.console.log('We received an file change event');
-});
-
 documents.listen(connection);
-
 connection.listen();
