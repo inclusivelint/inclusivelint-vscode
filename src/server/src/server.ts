@@ -24,44 +24,11 @@ let badWords = ['master', 'slave'];
 connection.onInitialize((params: InitializeParams) => {
 	const result: InitializeResult = {
 		capabilities: {
-			textDocumentSync: TextDocumentSyncKind.Full,
-			completionProvider: {
-				resolveProvider: false
-			}
+			textDocumentSync: TextDocumentSyncKind.Full
 		}
 	};
 	return result;
 });
-//also need to see how to get rid of this without errors
-connection.onCompletion(
-	(_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-		return [
-			{
-				label: 'TypeScript',
-				kind: CompletionItemKind.Text,
-				data: 1
-			},
-			{
-				label: 'JavaScript',
-				kind: CompletionItemKind.Text,
-				data: 2
-			}
-		];
-	}
-);
-//Need to understand how to get rid of this without errors
-connection.onCompletionResolve(
-	(item: CompletionItem): CompletionItem => {
-		if (item.data === 1) {
-			item.detail = 'TypeScript details';
-			item.documentation = 'TypeScript documentation';
-		} else if (item.data === 2) {
-			item.detail = 'JavaScript details';
-			item.documentation = 'JavaScript documentation';
-		}
-		return item;
-	}
-);
 
 connection.onInitialized(() => {
 });
@@ -91,6 +58,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
+
+
 
 connection.onDidChangeWatchedFiles(_change => {
 	connection.console.log('We received an file change event');
