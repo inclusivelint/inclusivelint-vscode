@@ -1,0 +1,20 @@
+{
+	"name": "inclusivelint-server",
+	"description": "Implementation of a language server in node.",
+	"version": "0.0.1",
+	"author": "Microsoft Corporation",
+	"license": "MIT",
+	"engines": {
+		"node": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/inclusivelint/inclusivelint-vscode"
+	},
+	"dependencies": {
+		"http": "0.0.1-security",
+		"vscode-languageserver": "^6.1.1",
+		"vscode-languageserver-textdocument": "^1.0.1"
+	},
+	"scripts": {}
+}
