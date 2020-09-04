@@ -13,7 +13,6 @@ import { replacementsMap } from './dictionary';
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
-let badWords = ['master', 'slave'];
 
 connection.onInitialize((params: InitializeParams) => {
 	const result: InitializeResult = {
@@ -33,18 +32,18 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 	let splitedText: Array<string> = text.split(" ");
 	
-	for (let word of badWords) {
-		if (splitedText.indexOf(word) != -1) {
+	for (let textWord of splitedText) {
+		if (replacementsMap.has(textWord)) {
 			let diagnostic: Diagnostic = {
 				severity: DiagnosticSeverity.Warning,
 				range: {
-					start: textDocument.positionAt(text.indexOf(word)),
-					end: textDocument.positionAt(text.indexOf(word) + word.length)
+					start: textDocument.positionAt(text.indexOf(textWord)),
+					end: textDocument.positionAt(text.indexOf(textWord) + textWord.length)
 				},
-				message: `${word} is not inclusive`,
+				message: `${textWord} is not inclusive. Consider using ${replacementsMap.get(textWord)}`,
 				source: 'inclusivelint'
 			};
-			diagnostics.push(diagnostic);	
+			diagnostics.push(diagnostic);
 		}
 	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
