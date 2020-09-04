@@ -8,19 +8,12 @@ import {
 	TextDocumentSyncKind,
 	InitializeResult
 } from 'vscode-languageserver';
-
-import { readFileSync } from 'fs';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { replacementsMap } from './dictionary';
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 let badWords = ['master', 'slave'];
-
-function createDictionary(): Map<string, string> {
-	let fileText = readFileSync('file.txt','utf8');
-	connection.console.log(fileText);
-	return new Map();
-}
 
 connection.onInitialize((params: InitializeParams) => {
 	const result: InitializeResult = {

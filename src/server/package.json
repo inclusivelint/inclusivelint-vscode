@@ -12,6 +12,7 @@
 		"url": "https://github.com/inclusivelint/inclusivelint-vscode"
 	},
 	"dependencies": {
+		"http": "0.0.1-security",
 		"vscode-languageserver": "^6.1.1",
 		"vscode-languageserver-textdocument": "^1.0.1"
 	},
