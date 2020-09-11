@@ -27,6 +27,19 @@ documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
+function createDiagnostic(textDocument: TextDocument, textWord: string): Diagnostic {
+	let text = textDocument.getText();
+	return {
+		severity: DiagnosticSeverity.Warning,
+		range: {
+			start: textDocument.positionAt(text.indexOf(textWord)),
+			end: textDocument.positionAt(text.indexOf(textWord) + textWord.length)
+		},
+		message: `${textWord} is not inclusive. Consider using ${replacementsMap.get(textWord)}`,
+		source: 'inclusivelint'
+	};
+}
+
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let text = textDocument.getText();
 	let diagnostics: Diagnostic[] = [];
@@ -34,16 +47,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	
 	for (let textWord of splitedText) {
 		if (replacementsMap.has(textWord.toLowerCase())) {
-			let diagnostic: Diagnostic = {
-				severity: DiagnosticSeverity.Warning,
-				range: {
-					start: textDocument.positionAt(text.indexOf(textWord)),
-					end: textDocument.positionAt(text.indexOf(textWord) + textWord.length)
-				},
-				message: `${textWord} is not inclusive. Consider using ${replacementsMap.get(textWord)}`,
-				source: 'inclusivelint'
-			};
-			diagnostics.push(diagnostic);
+			diagnostics.push(createDiagnostic(textDocument, textWord));
 		}
 	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
