@@ -33,7 +33,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let splitedText: Array<string> = text.split(" ");
 	
 	for (let textWord of splitedText) {
-		if (replacementsMap.has(textWord)) {
+		if (replacementsMap.has(textWord.toLowerCase())) {
 			let diagnostic: Diagnostic = {
 				severity: DiagnosticSeverity.Warning,
 				range: {
