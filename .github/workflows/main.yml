@@ -27,7 +27,5 @@ jobs:
     - name: npm install for the server
       run: cd src/server && npm install
     
-    - name: tsc
-      uses: icrawl/action-tsc@v1
-      with:
-        project: src
+    - name: compile TypeScript files
+      run: cd src && npm run compile
