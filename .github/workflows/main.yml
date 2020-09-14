@@ -19,13 +19,13 @@ jobs:
         node-version: 12
     
     - name: npm install for the whole project
-      run: cd src && cd npm install
+      run: cd src && npm install
 
     - name: npm install for client code
       run: cd src/client && npm install
 
     - name: npm install for the server
-      run: cd src/server && cd npm install
+      run: cd src/server && npm install
     
     - name: tsc
       uses: icrawl/action-tsc@v1
