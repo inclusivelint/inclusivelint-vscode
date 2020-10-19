@@ -1,29 +1,33 @@
 {
-	"name": "inclusivelint-vscode",
-	"description": "Language Server implementation of vscode",
-	"author": "Microsoft Corporation",
+	"name": "inclusivelint",
+	"description": "Inlusivelint extensions for Visual Studio Code",
+	"author": "insclusivelint",
 	"license": "MIT",
 	"version": "0.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/inclusivelint/inclusivelint-vscode"
 	},
-	"publisher": "vscode-samples",
-	"categories": [],
+	"publisher": "inclusivelint",
+	"categories": [
+		"Linters"
+	],
 	"keywords": [
-		"multi-root ready"
+		"inclusivelint inclusive-language"
 	],
 	"engines": {
 		"vscode": "^1.43.0"
 	},
 	"activationEvents": [
-		"onLanguage:plaintext"
+		"onLanguage:plaintext",
+		"onLanguage:markdown",
+		"onLanguage:html"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
 		"configuration": {
 			"type": "object",
-			"title": "Example configuration",
+			"title": "Inclusivelint Configuration",
 			"properties": {
 				"languageServerExample.maxNumberOfProblems": {
 					"scope": "resource",
