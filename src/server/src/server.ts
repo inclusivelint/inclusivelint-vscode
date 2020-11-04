@@ -27,13 +27,13 @@ documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
-function createDiagnostic(textDocument: TextDocument, textWord: string): Diagnostic {
+function createDiagnostic(textDocument: TextDocument, textWord: string, wordIndex: number): Diagnostic {
 	let text = textDocument.getText();
 	return {
 		severity: DiagnosticSeverity.Warning,
 		range: {
-			start: textDocument.positionAt(text.indexOf(textWord)),
-			end: textDocument.positionAt(text.indexOf(textWord) + textWord.length)
+			start: textDocument.positionAt(wordIndex),
+			end: textDocument.positionAt(wordIndex + textWord.length)
 		},
 		message: `${textWord} is not inclusive. Consider using ${replacementsMap.get(textWord)}`,
 		source: 'inclusivelint'
@@ -43,14 +43,29 @@ function createDiagnostic(textDocument: TextDocument, textWord: string): Diagnos
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let text = textDocument.getText();
 	let diagnostics: Diagnostic[] = [];
-	let splitedText: Array<string> = text.split(" ");
+	var lastWordStartIndex = 0;
+	
+	let splitedText: Array<string> = splitTextIntoWords();
 	
 	for (let textWord of splitedText) {
-		if (replacementsMap.has(textWord.toLowerCase())) {
-			diagnostics.push(createDiagnostic(textDocument, textWord));
+		let wordStartIndexInText = text.indexOf(textWord, lastWordStartIndex);
+		//add the length t position the index search after the last work start index.
+		//It is import as the next word may be the same as the last one and
+		//the indexOf will return the index of the first occurence only. 
+		lastWordStartIndex = wordStartIndexInText + textWord.length;
+		
+		var lcTextWord = textWord.toLowerCase();
+
+		if (replacementsMap.has(lcTextWord)) {
+			diagnostics.push(createDiagnostic(textDocument, textWord, wordStartIndexInText));
 		}
 	}
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+	
+	function splitTextIntoWords(): string[] {
+		//replace all non word by space. Numbers are not replaced.
+		return text.replace(/(\W*)\s/g, " ").split(" ");
+	}
 }
 
 documents.listen(connection);
