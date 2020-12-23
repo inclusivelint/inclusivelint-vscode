@@ -9,7 +9,7 @@ import {
 	InitializeResult
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { replacementsMap } from './dictionary';
+import { InclusiveDiagnostic, scan } from 'inclusivelint';
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
@@ -27,15 +27,14 @@ documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
-function createDiagnostic(textDocument: TextDocument, textWord: string): Diagnostic {
-	let text = textDocument.getText();
+function createDiagnostic(textDocument: TextDocument, warning: InclusiveDiagnostic): Diagnostic {
 	return {
 		severity: DiagnosticSeverity.Warning,
 		range: {
-			start: textDocument.positionAt(text.indexOf(textWord)),
-			end: textDocument.positionAt(text.indexOf(textWord) + textWord.length)
+			start: textDocument.positionAt(warning.termStartIndex),
+			end: textDocument.positionAt(warning.termEndIndex)
 		},
-		message: `${textWord} is not inclusive. Consider using ${replacementsMap.get(textWord)}`,
+		message: `${warning.term} is not inclusive. Consider using ${warning.suggestedTerms}`,
 		source: 'inclusivelint'
 	};
 }
@@ -43,13 +42,13 @@ function createDiagnostic(textDocument: TextDocument, textWord: string): Diagnos
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let text = textDocument.getText();
 	let diagnostics: Diagnostic[] = [];
-	let splitedText: Array<string> = text.split(" ");
-	
-	for (let textWord of splitedText) {
-		if (replacementsMap.has(textWord.toLowerCase())) {
-			diagnostics.push(createDiagnostic(textDocument, textWord));
-		}
+
+	let listOfWarnings: InclusiveDiagnostic[] = await scan(text);
+	for (let warning of listOfWarnings) {
+		var diagnostic = createDiagnostic(textDocument, warning)
+		diagnostics.push(diagnostic)
 	}
+
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
