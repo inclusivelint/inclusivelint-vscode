@@ -1,9 +1,9 @@
 {
-	"name": "inclusivelint",
+	"name": "inclusivelint-vscode",
 	"description": "Inlusivelint extensions for Visual Studio Code",
 	"author": "insclusivelint",
 	"license": "MIT",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/inclusivelint/inclusivelint-vscode"
@@ -63,5 +63,8 @@
 		"eslint": "^6.4.0",
 		"@typescript-eslint/parser": "^2.3.0",
 		"typescript": "^3.9.4"
+	},
+	"dependencies": {
+		"inclusivelint": "0.0.15"
 	}
 }
